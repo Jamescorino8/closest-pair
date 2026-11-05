@@ -22,10 +22,22 @@ public class ClosestPair {
      *  ONLY THE BODY WILL BE CONSIDERED FOR GRADING
      */
     public static Point[] getCPBruteForce(Point[] pts) {
-        //TODO: Implement this method for part (a) of the assignment
+        if (pts.length < 2) return null;
 
+        Point[] res = {pts[0], pts[1]};
+        double d = pts[0].dist(pts[1]);
 
-        return null;
+        for (int i = 0; i < pts.length; i++) {
+            for (int j = i + 1; j < pts.length; j++) {
+                double dist = pts[i].dist(pts[j]);
+                if (dist < d) {
+                    d = dist;
+                    res = new Point[]{pts[i], pts[j]};
+                }
+            }
+        }
+
+        return res;
     }
 
     /**
@@ -55,13 +67,6 @@ public class ClosestPair {
         int n = ptsX.length;
         if (n < 2) return null;
         if (n == 2) return ptsX;
-
-        double m;
-        if (n % 2 == 0) {
-            m = ptsX[n / 2].x;
-        } else {
-            m = (ptsX[(n / 2) - 1].x + ptsX[n / 2].x) / 2.0;
-        }
 
         int mid = n / 2;
         double midX = ptsX[mid].x;
@@ -93,11 +98,10 @@ public class ClosestPair {
         }
         Point[] ptsWithinD = Arrays.copyOf(temp, count);
 
-        for (int i = 1; i < ptsWithinD.length; i++) {
-            for (int j = 1; j < Math.min(ptsWithinD.length, i + 7); j++) {
+        for (int i = 0; i < ptsWithinD.length; i++) {
+            for (int j = i + 1; j < Math.min(ptsWithinD.length, i + 8); j++) {
                 if (ptsWithinD[i].dist(ptsWithinD[j]) < d) {
-                    res[0] = ptsWithinD[i];
-                    res[1] = ptsWithinD[j];
+                    res = new Point[]{ptsWithinD[i], ptsWithinD[j]};
                     d = ptsWithinD[i].dist(ptsWithinD[j]);
                 }
             }
