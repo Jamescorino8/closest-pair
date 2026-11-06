@@ -104,7 +104,28 @@ public class ClosestPairDriver {
      *  Use the provided random point generator getRandomPoints()
      */
     private static void runnningTimeComparison() {
-        //TODO: Implement this method for part (b) of the assignment
+        int[] sizes = {10, 100, 1000, 10000};
+        int runs = 5;
+
+        System.out.println();
+        System.out.println("Num points\tBrute Force (ms)\tDivide-and-Conquer (ms)");
+        for (int n : sizes) {
+            long totalBruteForce = 0, totalDivideConquer = 0;
+            for (int r = 0; r < runs; r++) {
+                Point[] pts = getRandomPoints(n);
+
+                long tick = System.nanoTime();
+                ClosestPair.getCPBruteForce(pts);
+                totalBruteForce += System.nanoTime() - tick;
+
+                tick = System.nanoTime();
+                ClosestPair.getCPDivideAndConquer(pts);
+                totalDivideConquer += System.nanoTime() - tick;
+            }
+            double avgBruteFore = totalBruteForce / (runs * 1e6);
+            double avgDivideConquer = totalDivideConquer / (runs * 1e6);
+            System.out.printf("%d\t\t%.3f\t\t\t%.3f%n", n, avgBruteFore, avgDivideConquer);
+        }
     }
 
     /**
@@ -123,11 +144,11 @@ public class ClosestPairDriver {
         else
             System.err.println("Test Divide-And-Conquer: FAILED");
 
-        int numpoints = 10000;
-        if (testRandom(numpoints))
-            System.out.println("Test " + numpoints + " Points: SUCCESS");
+        int numPoints = 10000;
+        if (testRandom(numPoints))
+            System.out.println("Test " + numPoints + " Points: SUCCESS");
         else
-            System.err.println("Test " + numpoints + " Points: FAILED");
+            System.err.println("Test " + numPoints + " Points: FAILED");
 
         // Running time comparison
         runnningTimeComparison();
