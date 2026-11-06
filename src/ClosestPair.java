@@ -27,6 +27,7 @@ public class ClosestPair {
         Point[] res = {pts[0], pts[1]};
         double d = pts[0].dist(pts[1]);
 
+        // Check all n(n-1)/2 pairs
         for (int i = 0; i < pts.length; i++) {
             for (int j = i + 1; j < pts.length; j++) {
                 double dist = pts[i].dist(pts[j]);
@@ -64,33 +65,41 @@ public class ClosestPair {
      *  ONLY THE BODY WILL BE CONSIDERED FOR GRADING
      */
     public static Point[] getCPDivideAndConquer(Point[] ptsX, Point[] ptsY) {
+        // Divide
         int n = ptsX.length;
         if (n < 2) return null;
         if (n == 2) return ptsX;
 
         int mid = n / 2;
         double midX = ptsX[mid].x;
+
         Point[] ptsX_left = Arrays.copyOfRange(ptsX, 0, mid);
         Point[] ptsX_right = Arrays.copyOfRange(ptsX, mid, n);
 
         Point[] ptsY_left = new Point[mid];
         Point[] ptsY_right = new Point[n - mid];
+        // Set is used so points with x == midX land on the correct side.
         java.util.Set<Point> leftSet = new java.util.HashSet<>(Arrays.asList(ptsX_left));
+        // Builds the y-sorted left and right halves without sorting again.
         int li = 0, ri = 0;
         for (Point p : ptsY) {
             if (leftSet.contains(p)) ptsY_left[li++] = p;
             else ptsY_right[ri++] = p;
         }
 
+        // Conquer
         Point[] pair_left = getCPDivideAndConquer(ptsX_left, ptsY_left);
         Point[] pair_right = getCPDivideAndConquer(ptsX_right, ptsY_right);
 
+        // Combine
+        // Best pair of the two halves.
         Point[] res;
         if (pair_left == null) res = pair_right;
         else if (pair_right == null) res = pair_left;
         else res = pair_left[0].dist(pair_left[1]) <= pair_right[0].dist(pair_right[1]) ? pair_left : pair_right;
         double d = res[0].dist(res[1]);
 
+        // Check pairs split by the line x = midX.
         Point[] temp = new Point[n];
         int count = 0;
         for (Point p : ptsY) {
