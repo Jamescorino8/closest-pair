@@ -78,12 +78,26 @@ public class ClosestPair {
 
         Point[] ptsY_left = new Point[mid];
         Point[] ptsY_right = new Point[n - mid];
-        // Set is used so points with x == midX land on the correct side.
-        java.util.Set<Point> leftSet = new java.util.HashSet<>(Arrays.asList(ptsX_left));
         // Builds the y-sorted left and right halves without sorting again.
+        // A point is on the left if it sorts before ptsX[mid], using the same order as
+        // Point.sortByX (x, then y, then hashCode), so points with x == midX land on the correct side.
+        Point m = ptsX[mid];
         int li = 0, ri = 0;
         for (Point p : ptsY) {
-            if (leftSet.contains(p)) ptsY_left[li++] = p;
+            int c = Double.compare(p.x, m.x);
+            if (c == 0) c = Double.compare(p.y, m.y);
+            if (c == 0) c = Integer.compare(p.hashCode(), m.hashCode());
+            boolean isLeft = c < 0;
+            // Full tie with ptsX[mid] (same coordinates and hashCode, very rare): check ptsX_left directly
+            if (c == 0 && p != m) {
+                for (int k = 0; k < mid; k++) {
+                    if (ptsX_left[k] == p) {
+                        isLeft = true;
+                        break;
+                    }
+                }
+            }
+            if (isLeft) ptsY_left[li++] = p;
             else ptsY_right[ri++] = p;
         }
 
